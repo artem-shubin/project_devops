@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-wordpress
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: web
+      owner: ArtemShubin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: web
+        owner: ArtemShubin
+    spec:
+      containers:
+      - image: {{ .Values.wordpress.container.image }}
+        name: {{ .Release.Name }}-wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: {{ .Release.Name }}-mysql-wp:3306
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-user-password-9m7k5b4k2m
+              key: passworduser
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-user-4t5mcf8dkm
+              key: username
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-database-4f74mgddt5
+              key: database
+        ports:
+        - containerPort: 80
+          name: {{ .Release.Name }}-wordpress
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: {{ .Release.Name }}-wordpress
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 80

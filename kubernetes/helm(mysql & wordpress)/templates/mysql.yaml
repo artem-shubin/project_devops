@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mysql-wp
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+      owner: ArtemShubin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+        owner: ArtemShubin
+    spec:
+      containers:
+      - image: {{ .Values.mysql.container.image }}
+        name: {{ .Release.Name }}-mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-password-f547bhm8mc
+              key: password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-user-4t5mcf8dkm
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-user-password-9m7k5b4k2m
+              key: passworduser
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-database-4f74mgddt5
+              key: database
+        ports:
+        - containerPort: 3306
+          name: {{ .Release.Name }}-mysql

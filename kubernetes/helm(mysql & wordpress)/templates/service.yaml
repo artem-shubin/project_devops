@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-mysql-wp
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+    owner: ArtemShubin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: web
+    owner: ArtemShubin
+  type: LoadBalancer

@@ -1,0 +1,7 @@
+# Default Values for my Helm Chart
+mysql:
+  container:
+    image: mysql:5.7
+wordpress:
+  container:
+    image: wordpress:php8.1-apache

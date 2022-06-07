@@ -1,0 +1,89 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: bbb
+      WORDPRESS_DB_PASSWORD: bbb
+      WORDPRESS_DB_NAME: bbbb
+    networks:
+      - myproject1
+    ports:
+      - 8089:80
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: bbbb
+      MYSQL_USER: bbb
+      MYSQL_PASSWORD: bbb
+      MYSQL_ROOT_PASSWORD: bbb
+    networks:
+      - myproject1
+    ports:
+      - 3307:3306
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: bbb
+      PMA_PASSWORD: bbb
+    networks:
+      - myproject1
+    ports:
+      - 8081:80
+  postfixadmin:
+    depends_on:
+      - db
+    image: postfixadmin
+    environment:
+      POSTFIXADMIN_DB_HOST: db
+      POSTFIXADMIN_DB_USER: bbb
+      POSTFIXADMIN_DB_PASSWORD: bbb
+    networks:
+      - myproject1
+    ports:
+      - 8082:80
+    restart: always
+  dovecot:
+    image: dovecot/dovecot
+    restart: always
+    networks:
+      - myproject1
+    ports:
+      - 8083:80
+  roundcube:
+    depends_on:
+      - postfixadmin
+    image: roundcube/roundcubemail
+    restart: always
+    environment:
+      ROUNDCUBEMAIL_SMTP_PORT: 2525
+      ROUNDCUBEMAIL_DB_HOST: db
+      ROUNDCUBEMAIL_DB_USER: bbb
+      ROUNDCUBEMAIL_DB_PASSWORD: bbb
+    networks:
+      - myproject1
+    ports:
+      - 8084:80
+  python3:
+    depends_on:
+      - db
+    build: ./
+    networks:
+      - myproject1
+    ports:
+      - 5000:5000
+
+volumes:
+  wordpress:
+  db:
+networks:
+  myproject1:
