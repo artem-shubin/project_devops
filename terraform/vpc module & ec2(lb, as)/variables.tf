@@ -14,7 +14,7 @@ variable "instance_type" {
 variable "allow_ports" {
   description = "Your open ports"
   type        = list(any)
-  default     = ["80", "443", "22"]
+  default     = ["80", "443", "22", "8089", "8081", "8082", "8083", "8084"]
 }
 
 variable "common_tags" {

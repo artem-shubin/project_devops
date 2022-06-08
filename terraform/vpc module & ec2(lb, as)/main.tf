@@ -20,6 +20,9 @@ provider "aws" {
   region = var.region
 }
 
+module "vpc" {
+  source = "/modules/vpc"
+}
 resource "aws_launch_configuration" "web" {
   name_prefix     = "aws-"
   image_id        = data.aws_ami.ubuntu.id
@@ -31,8 +34,8 @@ resource "aws_launch_configuration" "web" {
   }
 }
 
-resource "aws_security_group" "allow_443_80_22" {
-  name = "allow_443_80_22"
+resource "aws_security_group" "allow_ports" {
+  name = "allow_ports"
 
   dynamic "ingress" {
     for_each = var.allow_ports
@@ -50,7 +53,7 @@ resource "aws_security_group" "allow_443_80_22" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = merge(var.common_tags, { Name = "allow_443_80_22" })
+  tags = merge(var.common_tags, { Name = "allow_ports" })
 }
 
 #------------------ aws_autoscaling_group
