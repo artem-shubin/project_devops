@@ -1,8 +1,8 @@
 #------------------
 # Security group
-# launch_configuration with auto ami 
-# Auto scaling with 2 availability_zone 
-# Load Balancer with 2 availability_zone 
+# launch_configuration with auto ami
+# Auto scaling with 2 availability_zone
+# Load Balancer with 2 availability_zone
 
 
 data "aws_availability_zones" "available" {}
@@ -67,7 +67,7 @@ resource "aws_autoscaling_group" "web" {
   launch_configuration      = aws_launch_configuration.web.name
   vpc_zone_identifier       = [aws_default_subnet.default_az1.id, aws_default_subnet.default_az2.id]
 
-  tag = merge(var.common_tags, { Name = "aws_autoscaling_group" })
+  tags = merge(var.common_tags, { Name = "aws_autoscaling_group" })
 
 }
 
