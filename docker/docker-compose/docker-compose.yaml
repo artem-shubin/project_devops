@@ -73,15 +73,6 @@ services:
       - myproject1
     ports:
       - 8084:80
-  python3:
-    depends_on:
-      - db
-    build: ./
-    networks:
-      - myproject1
-    ports:
-      - 5000:5000
-
 volumes:
   wordpress:
   db:
